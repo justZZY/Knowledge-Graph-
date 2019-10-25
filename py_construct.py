@@ -19,7 +19,7 @@ diagnostic_label="诊断方法"# 定义诊断label
 class createBHPData(object):
     def __init__(self):
         # 建立连接
-        link = Graph("http://localhost:7474", username="neo4j", password="yqhzzy0901")
+        link = Graph("http://localhost:7474", username="neo4j", password="neo4j")
         self.graph=link
     def clean_node(self):
         # 清空数据库
