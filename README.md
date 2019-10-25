@@ -1,9 +1,6 @@
 # Python操作知识图谱数据库
 ------
 
-```python
-pip install py2neo
-```
 ## 1.安装Neo4J
 
 ### 官网下载Neo4J的zip包，然后解压，将neo4j_path/bin配入path中，进入bin目录运行
@@ -148,6 +145,3 @@ c.create_Rel()
 ```
 
 >最后,刷新浏览器版neo4j，然后就可以看到自己的图了。
-
-
-## 4.项目地址:[点击这里,欢迎Star!](https://github.com/Light-City/PyToNeo4J)
