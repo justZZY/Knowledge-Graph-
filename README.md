@@ -1,6 +1,5 @@
 # Python操作知识图谱数据库
 ------
-![](http://p20tr36iw.bkt.clouddn.com/graph.jpg)
 
 ```python
 pip install py2neo
@@ -12,7 +11,6 @@ pip install py2neo
 neo4j.bat console
 ```
 ## 2.运行Neo4J
-![](http://p20tr36iw.bkt.clouddn.com/neo4j.png)
 
 ### 浏览器输入:http://localhost:7474，初始用户名与密码均为neo4j
 
@@ -89,38 +87,23 @@ from py2neo import Relationship
 def create_Rel(self):
     """
     建立关系
-    高血压疾病与临床表现之间的双向关系定义
+    高压疾病与临床表现之间的双向关系定义
     :return:
     """
+    matcher = NodeMatcher(self.graph)
     # 获取高血压与糖尿病结点，然后通过循环，建立这两个疾病与临床表现的关系
-    hyp_node = self.graph.find_one(
-        label=dis_label,
-        property_key="name",
-        property_value="高血压"
-    )
-    tnb_node = self.graph.find_one(
-        label=dis_label,
-        property_key="name",
-        property_value="糖尿病"
-    )
+    hyp_node = matcher.match(dis_label, name = "高血压").first()
+    tnb_node = matcher.match(dis_label, name = "糖尿病").first()
     # 建立疾病与临床表现的关系
     for cli_name in cli_list:
-        cli_node = self.graph.find_one(
-            label=cli_label,
-            property_key="name",
-            property_value=cli_name
-        )
+        cli_node = matcher.match(cli_label, name = cli_name).first()
         hyp_to_cli = Relationship(hyp_node, '产生', cli_node)
         self.graph.create(hyp_to_cli)
         tnb_to_cli = Relationship(tnb_node, '产生', cli_node)
         self.graph.create(tnb_to_cli)
     # 建立疾病与诊断方法之间的关系
     for diag_name in zd_method_list:
-        diag_node = self.graph.find_one(
-            label=diagnostic_label,
-            property_key="name",
-            property_value=diag_name
-        )
+        diag_node = matcher.match(diagnostic_label, name = diag_name).first()
         if diag_name=="血糖" and diag_name=="血脂" and diag_name=="胆固醇":
             diag_to_dis = Relationship(diag_node, '辅助检查', tnb_node)
         else:
@@ -128,31 +111,17 @@ def create_Rel(self):
         self.graph.create(diag_to_dis)
     # 建立疾病与药物关系
     for drug_name in drug_list:
-        drug_node = self.graph.find_one(
-            label=dru_label,
-            property_key="name",
-            property_value=drug_name
-        )
+        drug_node = matcher.match(dru_label, name = drug_name).first()
         if drug_name=="胰岛素" or drug_name=="胰高血糖素":
             drug_to_disease=Relationship(drug_node,'治疗',tnb_node)
         else:
             drug_to_disease= Relationship(drug_node, '治疗', hyp_node)
         self.graph.create(drug_to_disease)
-
     # 建立药物与副作用之间的关系
     for drug_name in drug_list:
-        drug_node = self.graph.find_one(
-            label=dru_label,
-            property_key="name",
-            property_value=drug_name
-        )
+        drug_node = matcher.match(dru_label, name = drug_name).first()
         for sdef_name in sdef_list:
-            sdef_node = self.graph.find_one(
-                label=side_effect_label,
-                property_key="name",
-                property_value=sdef_name
-            )
-
+            sdef_node = matcher.match(side_effect_label, name = sdef_name).first()
             if drug_name == "利尿药" and sdef_name == "尿酸升高":
                 drug_to_sdef = Relationship(drug_node, '引发', sdef_node)
                 self.graph.create(drug_to_sdef)
